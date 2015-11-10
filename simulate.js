@@ -4,12 +4,11 @@
 PI_2 = Math.PI / 2;
 PI_180 = Math.PI / 180;
 
-
 /**
  * Random
  */
 var Random = {
-    between:function(min,max) {
+    between: function(min, max) {
         return min + (Math.random() * (max - min));
     }
 }
@@ -17,36 +16,36 @@ var Random = {
 /**
  * 2D Vector Class
  */
-function Vector(x,y) {
-  this._x = x || 0;
-  this._y = y || 0;
+function Vector(x, y) {
+    this._x = x || 0;
+    this._y = y || 0;
 }
 
-Vector.create = function(x,y) {
+Vector.create = function(x, y) {
     return new Vector(x, y);
 };
 
-Vector.add = function(a,b) {
+Vector.add = function(a, b) {
     return new Vector(a.x + b.x, a.y + b.y);
 };
 
-Vector.subtract = function(a,b) {
+Vector.subtract = function(a, b) {
     return new Vector(a.x - b.x, a.y - b.y);
 };
 
 Vector.random = function(range) {
     var v = new Vector();
-        v.randomize(range);
+    v.randomize(range);
     return v;
 };
 
-Vector.distance = function(a,b) {
+Vector.distanceSquared = function(a, b) {
     var dx = a.x - b.x;
     var dy = a.y - b.y;
     return dx * dx + dy * dy;
 };
 
-Vector.distanceSquared = function(a,b) {
+Vector.distance = function(a, b) {
     var dx = a.x - b.x;
     var dy = a.y - b.y;
     return Math.sqrt(dx * dx + dy * dy);
@@ -74,58 +73,58 @@ Vector.prototype = {
     get angle() {
         return Math.atan2(this._y, this._x) * 180 / Math.PI;
     },
-    clone:function() {
-        return new Vector(this._x,this._y);
+    clone: function() {
+        return new Vector(this._x, this._y);
     },
-    add:function(v) {
+    add: function(v) {
         this._x += v.x;
         this._y += v.y;
     },
-    subtract:function(v) {
+    subtract: function(v) {
         this._x -= v.x;
         this._y -= v.y;
     },
-    multiply:function(value) {
+    multiply: function(value) {
         this._x *= value;
         this._y *= value;
     },
-    divide:function(value) {
+    divide: function(value) {
         this._x /= value;
         this._y /= value;
     },
-    normalize:function(){
+    normalize: function() {
         var magnitude = this.magnitude;
         if (magnitude > 0) {
             this.divide(magnitude);
         }
     },
-    limit:function(treshold) {
+    limit: function(treshold) {
         if (this.magnitude > treshold) {
             this.normalize();
             this.multiply(treshold);
         }
     },
-    randomize:function(amount) {
+    randomize: function(amount) {
         amount = amount || 1;
         this._x = amount * 2 * (-.5 + Math.random());
         this._y = amount * 2 * (-.5 + Math.random());
     },
-    rotate:function(degrees) {
+    rotate: function(degrees) {
         var magnitude = this.magnitude;
-        var angle = ((Math.atan2(this._x,this._y) * PI_HALF) + degrees) * PI_180;
+        var angle = ((Math.atan2(this._x, this._y) * PI_HALF) + degrees) * PI_180;
         this._x = magnitude * Math.cos(angle);
         this._y = magnitude * Math.sin(angle);
     },
-    flip:function() {
+    flip: function() {
         var temp = this._y;
         this._y = this._x;
         this._x = temp;
     },
-    invert:function() {
+    invert: function() {
         this._x = -this._x;
         this._y = -this._y;
     },
-    toString:function() {
+    toString: function() {
         return this._x + ', ' + this._y;
     }
 }
@@ -169,19 +168,19 @@ Particle.prototype = {
     get velocity() {
         return this._velocity;
     },
-    update:function(stage) {
+    update: function(stage) {
 
         this._life++;
 
         var i = 0;
         var l = this._behavior.length;
 
-        for (;i<l;i++) {
-            this._behavior[i].call(stage,this);
+        for (; i < l; i++) {
+            this._behavior[i].call(stage, this);
         }
 
     },
-    toString:function() {
+    toString: function() {
         return 'Particle(' + this._id + ') ' + this._life + ' pos: ' + this._position + ' vec: ' + this._velocity;
     }
 }
@@ -192,8 +191,8 @@ function simulate(dimensions, options) {
     // private vars
     var particles = [];
     var destroyed = [];
-    var update = update || function(){};
-    var stage = stage || function(){};
+    var update = update || function() {};
+    var stage = stage || function() {};
     var canvas;
     var context;
 
@@ -213,26 +212,25 @@ function simulate(dimensions, options) {
     }
 
     if (!options.tick) {
-        options.tick = function(){};
+        options.tick = function() {};
     }
 
     if (!options.beforePaint) {
-        options.beforePaint = function(){};
+        options.beforePaint = function() {};
     }
 
     if (!options.afterPaint) {
-        options.afterPaint = function(){};
+        options.afterPaint = function() {};
     }
 
     if (!options.action) {
-        options.action = function(){};
+        options.action = function() {};
     }
 
     if (document.readyState === 'interactive') {
         setup();
-    }
-    else {
-        document.addEventListener('DOMContentLoaded',setup);
+    } else {
+        document.addEventListener('DOMContentLoaded', setup);
     }
 
     // resizes canvas to fit window dimensions
@@ -249,7 +247,7 @@ function simulate(dimensions, options) {
         document.body.appendChild(canvas);
 
         // correct canvas size on window resize
-        window.addEventListener('resize',fitCanvas);
+        window.addEventListener('resize', fitCanvas);
 
         // go
         go();
@@ -271,7 +269,7 @@ function simulate(dimensions, options) {
             var i = 0;
             var l = particles.length;
             var p;
-            for (; i<l; i++) {
+            for (; i < l; i++) {
                 particles[i].update(this);
             }
 
@@ -286,9 +284,9 @@ function simulate(dimensions, options) {
                     }
 
                     // remove particle
-                    particles.splice(i,1);
+                    particles.splice(i, 1);
 
-                } while(i-- >= 0)
+                } while (i-- >= 0)
             }
 
             // repaint context
@@ -297,7 +295,7 @@ function simulate(dimensions, options) {
             // repaint particles
             i = 0;
             l = particles.length;
-            for (;i < l; i++) {
+            for (; i < l; i++) {
                 options.paint.call(this, particles[i]);
             }
 
@@ -320,7 +318,7 @@ function simulate(dimensions, options) {
 
         /**
          * API
-        **/
+         **/
         function clear() {
             context.clearRect(0, 0, canvas.width, canvas.height);
         }
@@ -333,10 +331,10 @@ function simulate(dimensions, options) {
             particles.push(new Particle(id, group, position, velocity, size, life, behavior));
         }
 
-        function spray(amount,config) {
-            var i=0;
-            for(;i<amount;i++) {
-                add.apply(this,config());
+        function spray(amount, config) {
+            var i = 0;
+            for (; i < amount; i++) {
+                add.apply(this, config());
             }
         }
 
@@ -362,23 +360,23 @@ function simulate(dimensions, options) {
         this.debug = debug;
 
         this.paint = {
-            circle:function(x,y,size,color) {
+            circle: function(x, y, size, color) {
                 context.beginPath();
-                context.arc(x,y,size,0, 2 * Math.PI, false);
+                context.arc(x, y, size, 0, 2 * Math.PI, false);
                 context.fillStyle = color;
                 context.fill();
             },
-            square:function(x,y,size,color) {
+            square: function(x, y, size, color) {
                 context.beginPath();
-                context.rect(x - (size * .5),y - (size * .5),size,size);
+                context.rect(x - (size * .5), y - (size * .5), size, size);
                 context.fillStyle = color;
                 context.fill();
             }
         }
 
         this.behavior = {
-            cohesion:function(range,speed){
-                range = Math.pow(range || 10,2);
+            cohesion: function(range, speed) {
+                range = Math.pow(range || 100, 2);
                 speed = speed || .001;
                 return function(particle) {
 
@@ -387,9 +385,11 @@ function simulate(dimensions, options) {
                     var l = particles.length;
                     var count = 0;
 
-                    if (l<=1) {return;}
+                    if (l <= 1) {
+                        return;
+                    }
 
-                    for(;i<l;i++) {
+                    for (; i < l; i++) {
 
                         // don't use self in group
                         if (particles[i] === particle || Vector.distanceSquared(particles[i].position, particle.position) > range) {
@@ -414,9 +414,9 @@ function simulate(dimensions, options) {
 
                 }
             },
-            separation:function(distance) {
+            separation: function(distance) {
 
-                var distance = Math.pow(distance || 5,2);
+                var distance = Math.pow(distance || 25, 2);
 
                 return function(particle) {
 
@@ -426,9 +426,11 @@ function simulate(dimensions, options) {
                     var count = 0;
                     var diff;
 
-                    if (l<=1) {return;}
+                    if (l <= 1) {
+                        return;
+                    }
 
-                    for(;i<l;i++) {
+                    for (; i < l; i++) {
 
                         // don't use self in group
                         if (particles[i] === particle || Vector.distanceSquared(particles[i].position, particle.position) > distance) {
@@ -436,7 +438,7 @@ function simulate(dimensions, options) {
                         }
 
                         // stay away from neighbours
-                        diff = Vector.subtract(particle.position,particles[i].position);
+                        diff = Vector.subtract(particle.position, particles[i].position);
                         diff.normalize();
 
                         heading.add(diff);
@@ -460,8 +462,8 @@ function simulate(dimensions, options) {
 
                 }
             },
-            alignment:function(range) {
-                range = Math.pow(range || 10,2);
+            alignment: function(range) {
+                range = Math.pow(range || 100, 2);
                 return function(particle) {
 
                     var i = 0;
@@ -469,9 +471,11 @@ function simulate(dimensions, options) {
                     var count = 0;
                     var heading = new Vector();
 
-                    if (l<=1) {return;}
+                    if (l <= 1) {
+                        return;
+                    }
 
-                    for(;i<l;i++) {
+                    for (; i < l; i++) {
 
                         // don't use self in group also don't align when out of range
                         if (particles[i] === particle || Vector.distanceSquared(particles[i].position, particle.position) > range) {
@@ -497,7 +501,7 @@ function simulate(dimensions, options) {
 
                 }
             },
-            move:function() {
+            move: function() {
                 return function(particle) {
                     particle.position.add(particle.velocity);
 
@@ -505,7 +509,7 @@ function simulate(dimensions, options) {
 
                 }
             },
-            eat:function(food){
+            eat: function(food) {
                 food = food || [];
                 return function(particle) {
 
@@ -513,7 +517,7 @@ function simulate(dimensions, options) {
                     var l = particles.length;
                     var prey;
 
-                    for(;i<l;i++) {
+                    for (; i < l; i++) {
 
                         prey = particles[i];
 
@@ -523,7 +527,7 @@ function simulate(dimensions, options) {
                         }
 
                         // calculate force vector
-                        if (Vector.distanceSquared(particle.position,neighbour.position) < 2 && particle.size >= neighbour.size) {
+                        if (Vector.distanceSquared(particle.position, neighbour.position) < 2 && particle.size >= neighbour.size) {
                             particle.size += neighbour.size;
                             destroy(neighbour);
                         }
@@ -531,25 +535,25 @@ function simulate(dimensions, options) {
                     }
                 }
             },
-            force:function(x,y) {
+            force: function(x, y) {
                 return function(particle) {
                     particle.velocity.x += x;
                     particle.velocity.y += y;
                 }
             },
-            limit:function(treshold) {
+            limit: function(treshold) {
                 return function(particle) {
                     particle.velocity.limit(treshold);
                 }
             },
-            attract:function(forceMultiplier,groups) {
+            attract: function(forceMultiplier, groups) {
                 forceMultiplier = forceMultiplier || 1;
                 groups = groups || [];
                 return function(particle) {
 
                     // attract other particles
-                    var totalForce = new Vector(0,0);
-                    var force = new Vector(0,0);
+                    var totalForce = new Vector(0, 0);
+                    var force = new Vector(0, 0);
                     var i = 0;
                     var l = particles.length;
                     var distance;
@@ -557,7 +561,7 @@ function simulate(dimensions, options) {
                     var attractor;
                     var grouping = groups.length;
 
-                    for(;i<l;i++) {
+                    for (; i < l; i++) {
 
                         attractor = particles[i];
 
@@ -583,7 +587,7 @@ function simulate(dimensions, options) {
                     particle.velocity.add(totalForce);
                 }
             },
-            wrap:function(margin) {
+            wrap: function(margin) {
                 return function(particle) {
 
                     // move around when particle reaches edge of screen
@@ -608,7 +612,7 @@ function simulate(dimensions, options) {
 
                 }
             },
-            reflect:function(particle) {
+            reflect: function(particle) {
 
                 return function() {
 
@@ -634,9 +638,8 @@ function simulate(dimensions, options) {
                     }
                 }
 
-
             },
-            edge:function(action){
+            edge: function(action) {
                 return function(particle) {
 
                     var position = particle.position;
@@ -663,22 +666,28 @@ function simulate(dimensions, options) {
         }
 
         // public
-        Object.defineProperties(this,
-            {
-                'particles':{
-                    get: function () { return particles; }
-                },
-                'width':{
-                    get: function () { return canvas.width; }
-                },
-                'height':{
-                    get: function () { return canvas.height; }
-                },
-                'context':{
-                    get: function () { return context; }
+        Object.defineProperties(this, {
+            'particles': {
+                get: function() {
+                    return particles;
+                }
+            },
+            'width': {
+                get: function() {
+                    return canvas.width;
+                }
+            },
+            'height': {
+                get: function() {
+                    return canvas.height;
+                }
+            },
+            'context': {
+                get: function() {
+                    return context;
                 }
             }
-        );
+        });
 
         // call init method so the scene can be setup
         options.init.call(this)
@@ -688,8 +697,8 @@ function simulate(dimensions, options) {
 
         // start listening to events
         var self = this;
-        document.addEventListener('click',function(e){
-            options.action.call(self,e.pageX,e.pageY);
+        document.addEventListener('click', function(e) {
+            options.action.call(self, e.pageX, e.pageY);
         });
 
     }
